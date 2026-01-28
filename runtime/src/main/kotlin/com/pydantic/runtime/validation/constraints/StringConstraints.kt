@@ -40,6 +40,58 @@ object StringConstraints {
         } else null
     }
 
+    fun lowercase(value: String?): ValidationError? =
+        if (value != null && value != value.lowercase())
+            ValidationError(
+                field = "",
+                message = "Value must be lowercase",
+                code = "STRING_LOWERCASE",
+                value = value
+            )
+        else null
+
+    fun uppercase(value: String?): ValidationError? =
+        if (value != null && value != value.uppercase())
+            ValidationError(
+                field = "",
+                message = "Value must be uppercase",
+                code = "STRING_UPPERCASE",
+                value = value
+            )
+        else null
+
+    fun trimmed(value: String?): ValidationError? =
+        if (value != null && value != value.trim())
+            ValidationError(
+                field = "",
+                message = "Value must not contain leading or trailing whitespace",
+                code = "STRING_TRIMMED",
+                value = value
+            )
+        else null
+
+    fun ascii(value: String?): ValidationError? =
+        if (value != null && value.any { it.code > 127 })
+            ValidationError(
+                field = "",
+                message = "Value must contain only ASCII characters",
+                code = "STRING_ASCII",
+                value = value
+            )
+        else null
+
+    fun slug(value: String?): ValidationError? {
+        val slugRegex = "^[a-z0-9]+(?:-[a-z0-9]+)*$".toRegex()
+        return if (value != null && !slugRegex.matches(value))
+            ValidationError(
+                field = "",
+                message = "Value must be a valid slug",
+                code = "STRING_SLUG",
+                value = value
+            )
+        else null
+    }
+
     fun email(value: String?): ValidationError? {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()
         return if (value != null && !emailRegex.matches(value)) {
@@ -166,6 +218,27 @@ object StringConstraints {
                     constraints = mapOf("allowedValues" to allowed)
                 )
             } else null
+        } else null
+    }
+
+    inline fun <reified E: Enum<E>> enum(value: String?, ignoreCase: Boolean = false): ValidationError? {
+        if (value == null) return null
+
+        val values = enumValues<E>().map { it.name }
+        val match = if (ignoreCase) {
+            values.any { it.equals(value, true)}
+        } else {
+            value in values
+        }
+
+        return if (!match) {
+            ValidationError(
+                field = null,
+                message = "Value must be one of: ${values.joinToString(", ")}",
+                code = "STRING_ENUM",
+                value = value,
+                constraints = mapOf("enum" to values)
+            )
         } else null
     }
 }

@@ -17,6 +17,13 @@ repositories {
     gradlePluginPortal()
 }
 
+
+// Configure functional tests
+val functionalTestSourceSet = sourceSets.create("functionalTest").apply {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+}
+
 dependencies {
     implementation(project(":runtime"))
     implementation(kotlin("stdlib"))
@@ -64,16 +71,12 @@ gradlePlugin {
             description = "A Kotlin Gradle plugin for Pydantic-like data validation and serialization"
         }
     }
+
+    testSourceSets(functionalTestSourceSet, sourceSets.testFixtures.get())
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-// Configure functional tests
-val functionalTestSourceSet = sourceSets.create("functionalTest").apply {
-    compileClasspath += sourceSets.main.get().output
-    runtimeClasspath += sourceSets.main.get().output
 }
 
 configurations["functionalTestImplementation"].extendsFrom(configurations.testImplementation.get())

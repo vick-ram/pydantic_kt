@@ -30,7 +30,7 @@ object NumberConstraints {
     }
 
     fun <T> range(value: T?, min: T, max: T): ValidationError? where T : Number, T : Comparable<T> {
-        return if (value != null && (value < min || value > max)) {
+        return if (value != null && (value !in min..max)) {
             ValidationError(
                 field = "",
                 message = "Value must be between $min and $max",
@@ -53,33 +53,12 @@ object NumberConstraints {
     }
 
     fun <T> negative(value: T?): ValidationError? where T : Number, T : Comparable<T> {
+        @Suppress("UNCHECKED_CAST")
         return if (value != null && value >= BigDecimal.ZERO as T) {
             ValidationError(
                 field = "",
                 message = "Value must be negative",
                 code = "NUMBER_NEGATIVE",
-                value = value
-            )
-        } else null
-    }
-
-    fun <T> nonNegative(value: T?): ValidationError? where T : Number, T : Comparable<T> {
-        return if (value != null && value < BigDecimal.ZERO as T) {
-            ValidationError(
-                field = "",
-                message = "Value must be non-negative",
-                code = "NUMBER_NON_NEGATIVE",
-                value = value
-            )
-        } else null
-    }
-
-    fun <T> nonPositive(value: T?): ValidationError? where T : Number, T : Comparable<T> {
-        return if (value != null && value > BigDecimal.ZERO as T) {
-            ValidationError(
-                field = "",
-                message = "Value must be non-positive",
-                code = "NUMBER_NON_POSITIVE",
                 value = value
             )
         } else null

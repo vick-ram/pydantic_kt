@@ -26,6 +26,7 @@ class PydanticPlugin : Plugin<Project> {
 
             it.strictMode.set(extension.strictValidation)
             it.packageName.set(extension.validationPackage)
+            it.useDelegates.set(extension.useDelegates)
 
             it.enabled = extension.enabled.get()
         }

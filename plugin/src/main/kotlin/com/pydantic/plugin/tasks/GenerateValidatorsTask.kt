@@ -30,12 +30,16 @@ abstract class GenerateValidatorsTask : DefaultTask() {
     @get:Input
     abstract val enableKsp: Property<Boolean>
 
+    @get:Input
+    abstract val useDelegates: Property<Boolean>
+
     init {
         inputDir.convention(project.layout.projectDirectory.dir("src/main/kotlin"))
         outputDir.convention(project.layout.buildDirectory.dir("generated/sources/pydantic"))
         packageName.convention("com.pydantic.generated")
         strictMode.convention(false)
         enableKsp.convention(true)
+        useDelegates.convention(false)
     }
 
     @TaskAction
@@ -43,13 +47,16 @@ abstract class GenerateValidatorsTask : DefaultTask() {
         val generator = ValidatorGenerator()
         val processor = SourceFileProcessor()
 
+
+        val detectDelegates = useDelegates.get()
+
         // Track processed models to avoid duplicates
         val processedModels = mutableSetOf<String>()
 
         inputChanges.getFileChanges(inputDir).forEach { change ->
             if (change.file.isFile && change.file.extension == "kt") {
                 try {
-                    val models = processor.processFile(change.file)
+                    val models = processor.processFile(change.file, detectDelegates)
                     models.forEach { model ->
                         val modelKey = "${model.packageName}.${model.name}"
                         if (modelKey !in processedModels) {

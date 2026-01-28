@@ -29,7 +29,11 @@ class FieldDelegateTest : StringSpec({
 
 // Test class using delegates
 class TestUser {
-    var name: String by Field.string(minLength = 2, maxLength = 10)
+    var name: String by stringField {
+        minLength(2)
+        maxLength(10)
+    }
+//    var name: String by Field.string(minLength = 2, maxLength = 10)
     var age: Int by Field.int(min = 0, max = 150)
 }
 

@@ -12,6 +12,7 @@ class FieldDelegate<T : Any?>(
     private var value: T? = initialValue
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        @Suppress("UNCHECKED_CAST")
         return value as T
     }
 
@@ -29,15 +30,25 @@ class FieldDelegate<T : Any?>(
     }
 }
 
+
 // DSL for creating field delegates
 object Field {
     fun string(
         initialValue: String? = null,
         minLength: Int? = null,
         maxLength: Int? = null,
+        lowercase: Boolean = false,
+        uppercase: Boolean = false,
+        slug: Boolean = false,
         pattern: String? = null,
         email: Boolean = false,
+        startsWith: String? = null,
+        endsWith: String? = null,
+        contains: String? = null,
+        equals: String? = null,
+        oneOf: Set<String>? = null,
         url: Boolean = false,
+        uuid: Boolean = false,
         notBlank: Boolean = false,
         notEmpty: Boolean = false
     ): FieldDelegate<String> {
@@ -51,8 +62,44 @@ object Field {
             validators.add { value -> StringConstraints.maxLength(value, max) }
         }
 
+        if (lowercase) {
+            validators.add { value -> StringConstraints.lowercase(value) }
+        }
+
+        if (uppercase) {
+            validators.add { value -> StringConstraints.uppercase(value) }
+        }
+
+        if (uppercase) {
+            validators.add { value -> StringConstraints.uppercase(value) }
+        }
+
+        if (slug) {
+            validators.add { value -> StringConstraints.slug(value) }
+        }
+
         pattern?.let { regex ->
             validators.add { value -> StringConstraints.pattern(value, regex) }
+        }
+
+        startsWith?.let { prefix ->
+            validators.add { value -> StringConstraints.startsWith(value, prefix) }
+        }
+
+        endsWith?.let { suffix ->
+            validators.add { value -> StringConstraints.endsWith(value, suffix) }
+        }
+
+        contains?.let { suffix ->
+            validators.add { value -> StringConstraints.contains(value, suffix) }
+        }
+
+        equals?.let { other ->
+            validators.add { value -> StringConstraints.equalsIgnoreCase(value, other) }
+        }
+
+        oneOf?.let { allowed ->
+            validators.add { value -> StringConstraints.oneOf(value, allowed) }
         }
 
         if (email) {
@@ -61,6 +108,10 @@ object Field {
 
         if (url) {
             validators.add { value -> StringConstraints.url(value) }
+        }
+
+        if (uuid) {
+            validators.add { value -> StringConstraints.uuid(value) }
         }
 
         if (notBlank) {
@@ -78,6 +129,9 @@ object Field {
         initialValue: Int? = null,
         min: Int? = null,
         max: Int? = null,
+        equals: Int? = null,
+        notEqual: Int? = null,
+        oneOf: Set<Int>? = null,
         range: IntRange? = null
     ): FieldDelegate<Int> {
         val validators = mutableListOf<(Int?) -> ValidationError?>()
@@ -92,6 +146,18 @@ object Field {
 
         range?.let { r ->
             validators.add { value -> NumberConstraints.range(value, r.first, r.last) }
+        }
+
+        equals?.let { eq ->
+            validators.add { value -> NumberConstraints.equals(value, eq) }
+        }
+
+        notEqual?.let { notEq ->
+            validators.add { value -> NumberConstraints.notEquals(value, notEq) }
+        }
+
+        oneOf?.let { allowed ->
+            validators.add { value -> NumberConstraints.oneOf(value, allowed) }
         }
 
         return FieldDelegate(initialValue, validators)

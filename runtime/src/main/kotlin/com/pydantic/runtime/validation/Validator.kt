@@ -40,16 +40,5 @@ abstract class BaseValidator<T: Any>(private val modelClas: KClass<T>) : Validat
         }
     }
 
-    protected fun <V> addConditionalValidation(
-        condition: (T) -> Boolean,
-        validator: (T) -> List<ValidationError>
-    ) {
-        validations.add { obj ->
-            if (condition(obj)) validator(obj) else emptyList()
-        }
-    }
-
-    override fun getSchema(): Map<String, Any> {
-        TODO("Not yet implemented")
-    }
+    override fun getSchema(): Map<String, Any> = emptyMap()
 }

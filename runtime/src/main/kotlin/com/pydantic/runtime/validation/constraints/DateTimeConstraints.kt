@@ -8,7 +8,6 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 
 object DateTimeConstraints {
-
     fun isDateTime(value: String?, format: String? = null): ValidationError? {
         return if (value != null) {
             try {
@@ -87,7 +86,7 @@ object DateTimeConstraints {
         } else null
     }
 
-    fun <T : Temporal> before(value: T?, reference: T): ValidationError? where T : Comparable<T> {
+    fun <T> before(value: T?, reference: T): ValidationError? where T : Temporal, T : Comparable<T> {
         return if (value != null && value >= reference) {
             ValidationError(
                 field = "",
@@ -99,7 +98,7 @@ object DateTimeConstraints {
         } else null
     }
 
-    fun <T : Temporal> after(value: T?, reference: T): ValidationError? where T : Comparable<T> {
+    fun <T> after(value: T?, reference: T): ValidationError? where T : Temporal, T : Comparable<T> {
         return if (value != null && value <= reference) {
             ValidationError(
                 field = "",
@@ -111,7 +110,7 @@ object DateTimeConstraints {
         } else null
     }
 
-    fun <T : Temporal> between(value: T?, start: T, end: T): ValidationError? where T : Comparable<T> {
+    fun <T> between(value: T?, start: T, end: T): ValidationError? where T : Temporal, T : Comparable<T> {
         return if (value != null && (value <= start || value >= end)) {
             ValidationError(
                 field = "",
