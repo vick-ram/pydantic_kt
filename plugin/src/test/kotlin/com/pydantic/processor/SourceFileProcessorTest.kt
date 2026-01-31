@@ -5,12 +5,12 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.io.File
+import kotlin.io.path.createTempDirectory
 
 class SourceFileProcessorTest : StringSpec({
 
     val processor = SourceFileProcessor()
-    val tempDir = createTempDir("pydantic-test")
-
+    val tempDir = createTempDirectory("pydantic-test").toFile()
     afterSpec {
         tempDir.deleteRecursively()
     }
@@ -65,14 +65,11 @@ class SourceFileProcessorTest : StringSpec({
         """.trimIndent()
 
         val file = File(tempDir, "Product.kt").apply { writeText(source) }
-        val models = processor.processFile(file)
+        val models = processor.processFile(file, true)
 
         models shouldHaveSize 1
         val model = models.first()
         model.name shouldBe "Product"
         model.properties shouldHaveSize 3
-
-        // Note: SourceFileProcessor needs to be updated to detect delegates
-        // For now, it might not find these properties
     }
 })

@@ -42,6 +42,7 @@ object NumberConstraints {
     }
 
     fun <T> positive(value: T?): ValidationError? where T : Number, T : Comparable<T> {
+        @Suppress("UNCHECKED_CAST")
         return if (value != null && value <= BigDecimal.ZERO as T) {
             ValidationError(
                 field = "",

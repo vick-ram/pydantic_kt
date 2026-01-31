@@ -79,6 +79,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.withType<Test> {
+    this.testLogging {
+        this.showStandardStreams = true
+    }
+}
+
 configurations["functionalTestImplementation"].extendsFrom(configurations.testImplementation.get())
 configurations["functionalTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
 
