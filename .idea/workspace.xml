@@ -5,12 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="44b17682-647c-4f94-a57f-bd68356c76dc" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/utils/ExtractAnnotations.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/utils/ExtractContent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/utils/ExtractDelegates.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugin/src/test/kotlin/com/pydantic/plugin/SimpleTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/plugin/pydantic_kt.plugin.functionalTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/plugin/pydantic_kt.plugin.functionalTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/plugin/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/functionalTest/kotlin/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/resources/META-INF/gradle-plugins/com.pydantic.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/kotlin/com/pydantic/plugin/PydanticPluginIntegrationTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/functionalTest/kotlin/com/pydantic/plugin/PydanticPluginIntegrationTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/src/main/kotlin/com/example/models/Product.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/functionalTest/resources/test-project/src/main/kotlin/com/example/models/Product.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/src/main/kotlin/com/example/models/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/functionalTest/resources/test-project/src/main/kotlin/com/example/models/User.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/functionalTest/src/test/kotlin/PydanticFunctionalTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/PydanticPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/PydanticPlugin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/GenerateDelegatesTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/GenerateDelegatesTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/GenerateValidatorsTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/GenerateValidatorsTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/ValidateModelsTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/tasks/ValidateModelsTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/DelegationGenerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/DelegationGenerator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/KspModelProcessor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/KspModelProcessor.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/SourceFileProcessor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/SourceFileProcessor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plugin/src/test/kotlin/com/pydantic/Pydantic_ktPluginTest.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/plugin/src/test/kotlin/com/pydantic/processor/SourceFileProcessorTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/test/kotlin/com/pydantic/processor/SourceFileProcessorTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/validation/constraints/NumberConstraints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/validation/constraints/NumberConstraints.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/ValidationRules.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/plugin/utils/ValidationRules.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/ValidatorGenerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/main/kotlin/com/pydantic/processor/ValidatorGenerator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin/src/testFixtures/kotlin/com/pydantic/test/PydanticPluginTestHelper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/plugin/src/testFixtures/kotlin/com/pydantic/test/PydanticPluginTestHelper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/serialization/Deserializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/serialization/Deserializer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/validation/ModelValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/com/pydantic/runtime/validation/ModelValidator.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,30 +65,27 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Class" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "vick-ram"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;vick-ram&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/vick-ram/pydantic_kt.git",
-    "accountId": "2b6c6cb9-64cb-46be-a29c-4a67c4752424"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:vick-ram/pydantic_kt.git&quot;,
+    &quot;accountId&quot;: &quot;2b6c6cb9-64cb-46be-a29c-4a67c4752424&quot;
   }
-}]]></component>
-  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="$USER_HOME$/.gradle/wrapper/dists/gradle-8.11.1-bin/bpt9gzteqjrbo1mjrsomdt32c/gradle-8.11.1" javaHome="$USER_HOME$/.sdkman/candidates/java/21.0.5-oracle" gradleVersion="8.11.1" />
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/plugin/src/functionalTest/build.gradle.kts" root0="SKIP_HIGHLIGHTING" />
-  </component>
+}</component>
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="$USER_HOME$/.gradle/wrapper/dists/gradle-8.11.1-bin/bpt9gzteqjrbo1mjrsomdt32c/gradle-8.11.1" javaHome="/usr/lib/jvm/java-21-openjdk-amd64" gradleVersion="8.11.1" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -77,6 +97,8 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
@@ -88,20 +110,23 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/plugin/src/functionalTest/resources/test-project" />
+      <recent name="$PROJECT_DIR$/plugin/src/functionalTest/src/main/kotlin/com/example" />
+      <recent name="$PROJECT_DIR$/plugin/src/functionalTest/kotlin/com/pydantic/plugin" />
       <recent name="$PROJECT_DIR$/plugin/src" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.pydantic.plugin.utils" />
+      <recent name="test-project.src.main.kotlin.com.example.models" />
       <recent name="com.pydantic.test" />
       <recent name="com.pydantic" />
       <recent name="com.pydantic.processor" />
-      <recent name="org.example.plugin" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.240" />
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>
@@ -115,7 +140,8 @@
       <workItem from="1768918366866" duration="826000" />
       <workItem from="1768919543786" duration="41636000" />
       <workItem from="1769170299049" duration="8555000" />
-      <workItem from="1769239448108" duration="87081000" />
+      <workItem from="1769239448108" duration="112271000" />
+      <workItem from="1771275289829" duration="764000" />
     </task>
     <servers />
   </component>
@@ -132,5 +158,13 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>

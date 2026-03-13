@@ -1,5 +1,5 @@
 plugins {
-    // This is the root project, no plugins needed here usually
+    alias(libs.plugins.kotlin.jvm) apply false
 }
 
 allprojects {

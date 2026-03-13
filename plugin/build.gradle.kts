@@ -1,9 +1,7 @@
 plugins {
-    // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
     `maven-publish`
-    // Apply the Kotlin JVM plugin to add support for Kotlin.
-    alias(libs.plugins.kotlin.jvm)
+    kotlin("jvm")
     alias(libs.plugins.ksp)
     id("com.gradle.plugin-publish") version "1.2.0"
     id("java-test-fixtures")  // For sharing test utilities
@@ -33,6 +31,8 @@ dependencies {
     implementation(libs.jackson.databind)
     implementation(libs.jackson.kotlin)
     implementation(libs.jackson.yaml)
+    implementation(libs.squareup.kotlinpoet)
+    implementation(libs.squareup.kotlinpoet.ksp)
     testImplementation(kotlin("test"))
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
@@ -50,10 +50,7 @@ dependencies {
     "functionalTestImplementation"(gradleTestKit())
     "functionalTestImplementation"(project)  // The plugin itself
 
-//    testFixturesImplementation(libs.kotest.runner.junit5)
-//    testFixturesImplementation(libs.kotest.assertions.core)
-
-    compileOnly(libs.kotlin)
+    implementation(libs.kotlin)
 }
 
 // Configure testFixtures source set
@@ -75,40 +72,47 @@ gradlePlugin {
     testSourceSets(functionalTestSourceSet, sourceSets.testFixtures.get())
 }
 
-tasks.test {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    testLogging { showStandardStreams = true }
+    dependsOn(tasks.pluginUnderTestMetadata)
 }
 
-tasks.withType<Test> {
-    this.testLogging {
-        this.showStandardStreams = true
+val dir  = layout.buildDirectory.get().asFile
+val copyFunctionalTestResources by tasks.registering(Copy::class) {
+    from("src/functionalTest/resources")
+//    into("$buildDir/functionalTest")
+    into("$dir/functionalTest")
+}
+
+val functionalTest by tasks.registering(Test::class) {
+    description = "Runs functional tests"
+    group = "verification"
+
+    testClassesDirs = functionalTestSourceSet.output.classesDirs
+    classpath = functionalTestSourceSet.runtimeClasspath
+    useJUnitPlatform()
+
+    dependsOn("pluginUnderTestMetadata", "jar")
+    dependsOn(":runtime:publishToMavenLocal")
+    dependsOn("publishToMavenLocal")
+    dependsOn(copyFunctionalTestResources)
+
+    systemProperty("test.project.dir", projectDir.path)
+    systemProperty("test.build.dir", dir.path)
+    systemProperty("org.gradle.configuration-cache", "false")
+
+    testLogging {
+        events("passed", "failed", "skipped")
+        showStandardStreams = true
+        showCauses = true
+        showStackTraces = true
     }
 }
 
 configurations["functionalTestImplementation"].extendsFrom(configurations.testImplementation.get())
 configurations["functionalTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
 
-val functionalTest by tasks.registering(Test::class) {
-    testClassesDirs = functionalTestSourceSet.output.classesDirs
-    classpath = functionalTestSourceSet.runtimeClasspath
-    useJUnitPlatform()
-
-    // Set up test environment
-    systemProperty("gradle.user.home", temporaryDir.path)
-    systemProperty("test.project.dir", projectDir.path)
-
-    dependsOn(tasks.jar)  // Ensure plugin JAR is built
-//    dependsOn(tasks.processFunctionalTestResources)
-
-    // Copy functional test resources
-    doFirst {
-        copy {
-            from("functionalTest")
-            into("$buildDir/functionalTest")
-            include("**/*.kt", "**/*.gradle.kts", "**/*.properties")
-        }
-    }
-}
 tasks.check {
     dependsOn(functionalTest)
 }

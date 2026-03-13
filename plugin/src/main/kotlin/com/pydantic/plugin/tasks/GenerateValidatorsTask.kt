@@ -64,13 +64,7 @@ abstract class GenerateValidatorsTask : DefaultTask() {
                             val useStrict = model.isStrict || strictMode.get()
 
                             val validatorCode = generator.generateValidator(model, useStrict)
-                            val outputFile = File(
-                                outputDir.get().asFile,
-                                "${model.packageName.replace('.', '/')}/${model.name}Validator.kt"
-                            )
-
-                            outputFile.parentFile.mkdirs()
-                            outputFile.writeText(validatorCode)
+                            validatorCode.writeTo(outputDir.get().asFile)
                             processedModels.add(modelKey)
 
                             logger.debug("Generated validator for ${model.name}")

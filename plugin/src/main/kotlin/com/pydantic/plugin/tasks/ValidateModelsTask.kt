@@ -1,6 +1,10 @@
 package com.pydantic.plugin.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.pydantic.plugin.utils.extractClassContent
+import com.pydantic.plugin.utils.extractDelegateProperties
+import com.pydantic.plugin.utils.extractPropertiesFromAnnotations
+import com.pydantic.plugin.utils.hasDelegateProperties
 import com.pydantic.runtime.validation.ModelDefinition
 import com.pydantic.runtime.validation.ModelValidator
 import com.pydantic.runtime.validation.ValidationError
@@ -29,6 +33,8 @@ abstract class ValidateModelsTask : DefaultTask() {
     @get:Input
     abstract val failOnError: Property<Boolean>
 
+    @get:Input
+    @get:Optional
     @Option(option = "models", description = "Specific models to validate")
     var modelFilter: String? = null
 
@@ -45,7 +51,7 @@ abstract class ValidateModelsTask : DefaultTask() {
         val reportDir = reportFile.get().asFile
         reportDir.mkdirs()
 
-        val validationResults = mutableListOf<com.pydantic.runtime.validation.ValidationResult>()
+        val validationResults = mutableListOf<ValidationResult>()
         val modelPattern = modelFilter?.split(",")?.toSet()
 
         sourceDir.get().asFile.walk()
@@ -99,49 +105,126 @@ abstract class ValidateModelsTask : DefaultTask() {
 
     private fun extractModels(file: File): List<ModelDefinition> {
         val content = file.readText()
+        val modelsFromAnnotations = extractWithAnnotations(content, file.name)
+        val modelsFromDelegates = extractWithDelegates(content, file.name)
+        
+        val strictModels = if (strictMode.get()) {
+            extractStrictModels(content, file.name)
+        } else {
+            emptyList()
+        }
+
+        return (modelsFromAnnotations + modelsFromDelegates + strictModels)
+            .distinctBy { it.name }
+    }
+
+    private fun extractStrictModels(content: String, fileName: String): List<ModelDefinition> {
+        val models = mutableListOf<ModelDefinition>()
+        val regex = """(?m)^\s*data\s+class\s+(\w+)""".toRegex()
+        
+        regex.findAll(content).forEach { match ->
+            val className = match.groupValues[1]
+            val classContent = extractClassContent(content, className)
+            
+            if (classContent.isNotEmpty()) {
+                models.add(ModelDefinition(
+                    name = className,
+                    content = classContent,
+                    sourceFile = fileName,
+                    properties = emptyList(),
+                    annotations = emptyMap()
+                ))
+            }
+        }
+        return models
+    }
+
+    private fun extractWithAnnotations(content: String, fileName: String): List<ModelDefinition> {
         val models = mutableListOf<ModelDefinition>()
 
-        // Look for @Serializable annotations
-        val pattern = """@Serializable[^)]*\)\s*(?:data\s+)?class\s+(\w+)""".toRegex()
-        val matches = pattern.findAll(content)
+        val classRegex =
+            """(?m)^\s*@Serializable(?:\s*\(([^)]*)\))?\s+(?:(?:data|open|abstract|sealed)\s+)?class\s+(\w+)""".toRegex()
+        val classMatches = classRegex.findAll(content)
 
-        matches.forEach { match ->
-            val className = match.groupValues[1]
-            val modelContent = extractClassContent(content, className)
+        classMatches.forEach { match ->
+            val annotationParams = match.groupValues[1]
+            val className = match.groupValues[2]
+            val classContent = extractClassContent(content, className)
 
-            models.add(
-                ModelDefinition(
-                    name = className,
-                    content = modelContent,
-                    sourceFile = file.name
+            if (classContent.isNotEmpty()) {
+                val modelDefinition = parseClassWithAnnotations(
+                    className = className,
+                    classContent = classContent,
+                    annotationParams = annotationParams,
+                    fileName = fileName
                 )
-            )
+                models.add(modelDefinition)
+            }
         }
 
         return models
     }
 
-    private fun extractClassContent(content: String, className: String): String {
-        val start = content.indexOf("class $className")
-        if (start == -1) return ""
+    private fun extractWithDelegates(content: String, fileName: String): List<ModelDefinition> {
+        val models = mutableListOf<ModelDefinition>()
 
-        var braceCount = 0
-        var end = start
+        val classRegex = """(?:class|data\s+class|open\s+class|abstract\s+class)\s+(\w+)\s*[:{\{]""".toRegex()
+        val classMatches = classRegex.findAll(content)
 
-        for (i in start until content.length) {
-            when (content[i]) {
-                '{' -> braceCount++
-                '}' -> {
-                    braceCount--
-                    if (braceCount == 0) {
-                        end = i + 1
-                        break
-                    }
+        classMatches.forEach { match ->
+            val className = match.groupValues[1]
+            val classContent = extractClassContent(content, className)
+
+            if (classContent.isNotEmpty()) {
+                if (hasDelegateProperties(classContent)) {
+                    val modelDefinition = parseClassWithDelegates(className, classContent, fileName)
+                    models.add(modelDefinition)
                 }
             }
         }
 
-        return content.substring(start, end)
+        return models
+    }
+
+    private fun parseClassWithAnnotations(
+        className: String,
+        classContent: String,
+        annotationParams: String,
+        fileName: String
+    ): ModelDefinition {
+        val annotations = mutableMapOf<String, String>()
+
+        if (annotationParams.isNotBlank()) {
+            annotationParams.split(',').forEach { param ->
+                val parts = param.split('=')
+                if (parts.size == 2) {
+                    val key = parts[0].trim()
+                    val value = parts[1].trim().removeSurrounding("\"")
+                    annotations[key] = value
+                }
+            }
+        }
+
+        val properties = extractPropertiesFromAnnotations(classContent)
+
+        return ModelDefinition(
+            name = className,
+            content = classContent,
+            sourceFile = fileName,
+            properties = properties,
+            annotations = annotations,
+        )
+    }
+
+    private fun parseClassWithDelegates(className: String, classContent: String, fileName: String): ModelDefinition {
+        val properties = extractDelegateProperties(classContent)
+
+        return ModelDefinition(
+            name = className,
+            content = classContent,
+            sourceFile = fileName,
+            properties = properties,
+        )
     }
 
     private fun generateReport(results: List<ValidationResult>) {
@@ -174,7 +257,7 @@ abstract class ValidateModelsTask : DefaultTask() {
         logger.lifecycle("Validation report generated: ${jsonReport.path}")
     }
 
-    private fun generateHtmlReport(file: File, results: List<com.pydantic.runtime.validation.ValidationResult>) {
+    private fun generateHtmlReport(file: File, results: List<ValidationResult>) {
         val html = """
             <!DOCTYPE html>
             <html>
@@ -206,15 +289,17 @@ abstract class ValidateModelsTask : DefaultTask() {
                 </div>
                 
                 <h2>Model Details</h2>
-                ${results.joinToString("\n") { result ->
-            """
+                ${
+            results.joinToString("\n") { result ->
+                """
                     <div class="model ${if (result.isValid) "valid" else "invalid"}">
                         <h3>${result.modelName} ${if (result.isValid) "✓" else "✗"}</h3>
                         ${if (result.errors.isNotEmpty()) "<h4>Errors:</h4>" + result.errors.joinToString("") { "<div class='error'>$it</div>" } else ""}
                         ${if (result.warnings.isNotEmpty()) "<h4>Warnings:</h4>" + result.warnings.joinToString("") { "<div class='warning'>$it</div>" } else ""}
                     </div>
                     """
-        }}
+            }
+        }
             </body>
             </html>
         """.trimIndent()

@@ -9,6 +9,7 @@ import java.io.File
 object PydanticPluginTestHelper {
 
     fun createTestProject(dir: File, buildScript: String, sourceFiles: Map<String, String> = emptyMap()): File {
+        if (dir.exists()) dir.deleteRecursively()
         dir.mkdirs()
 
         // Create build.gradle.kts
@@ -36,8 +37,8 @@ object PydanticPluginTestHelper {
     ): BuildResult {
         return GradleRunner.create()
             .withProjectDir(projectDir)
-            .withArguments(*tasks, "--stacktrace", "--info")
             .withPluginClasspath()
+            .withArguments(*tasks, "--stacktrace", "--info", "--no-configuration-cache")
             .withDebug(true)
             .let { runner ->
                 if (shouldSucceed) runner.build() else runner.buildAndFail()

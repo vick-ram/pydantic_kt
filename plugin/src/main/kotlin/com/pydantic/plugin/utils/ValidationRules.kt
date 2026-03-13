@@ -1,4 +1,4 @@
-package com.pydantic.processor
+package com.pydantic.plugin.utils
 
 import com.pydantic.runtime.validation.ModelInfo
 import com.pydantic.runtime.validation.PropertyInfo
@@ -182,4 +182,83 @@ private fun generateRequiredCheck(modelName: String, propName: String): String {
             ) else null
         }
     """.trimIndent()
+}
+
+data class DelegateRules(
+    val fieldParams: Set<String>,
+    val markerAnnotations: Map<String, String>
+)
+
+val DELEGATE_RULES: Map<String, DelegateRules> = mapOf(
+    "string" to DelegateRules(
+        fieldParams = setOf(
+            "minLength",
+            "maxLength",
+            "pattern",
+            "startsWith",
+            "endsWith",
+            "contains",
+            "equalsTo"
+        ),
+        markerAnnotations = mapOf(
+            "email" to "Email",
+            "url" to "Url",
+            "uuid" to "Uuid",
+            "slug" to "Slug",
+            "ascii" to "Ascii",
+            "trimmed" to "Trimmed",
+            "lowercase" to "Lowercase",
+            "uppercase" to "Uppercase",
+            "notBlank" to "NotBlank",
+            "notEmpty" to "NotEmpty"
+        )
+    ),
+
+    "int" to DelegateRules(
+        fieldParams = setOf("min", "max", "greaterThan", "lessThan", "equalsTo", "divisibleBy"),
+        markerAnnotations = emptyMap()
+    ),
+    "long" to DelegateRules(
+        fieldParams = setOf("min", "max", "gt", "lt", "equalsTo"),
+        markerAnnotations = emptyMap()
+    ),
+    "float" to DelegateRules(
+        fieldParams = setOf("min", "max", "gt", "lt"),
+        markerAnnotations = emptyMap()
+    ),
+    "double" to DelegateRules(
+        fieldParams = setOf("min", "max", "gt", "lt"),
+        markerAnnotations = emptyMap()
+    ),
+
+    // Date / time delegates
+    "date" to DelegateRules(
+        fieldParams = setOf("before", "after"),
+        markerAnnotations = mapOf(
+            "weekday" to "Weekday",
+            "weekend" to "Weekend"
+        )
+    ),
+    "time" to DelegateRules(
+        fieldParams = setOf("before", "after"),
+        markerAnnotations = emptyMap()
+    ),
+    "datetime" to DelegateRules(
+        fieldParams = setOf("before", "after"),
+        markerAnnotations = mapOf(
+            "weekday" to "Weekday",
+            "weekend" to "Weekend"
+        )
+    )
+)
+
+val PARAM_ALIASES = mapOf("gt" to "greaterThan", "lt" to "lessThan")
+
+fun normalizeTypeKey(input: String): String {
+    val normalized = input.lowercase()
+        .removePrefix("field")
+        .removeSuffix("field")
+        .trim()
+
+    return normalized.ifEmpty { "field" }
 }

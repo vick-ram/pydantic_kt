@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    kotlin("jvm") version "2.2.21"
+    kotlin("jvm")
 }
 
 group = "com.pydantic"

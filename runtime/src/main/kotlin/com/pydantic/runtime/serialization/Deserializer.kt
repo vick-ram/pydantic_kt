@@ -63,6 +63,7 @@ class PydanticDeserializer<T : Any>(
      */
     override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> {
         val type = ctxt.contextualType ?: property?.type
+        @Suppress("UNCHECKED_CAST")
         val rawClass = type?.rawClass?.kotlin as? KClass<T>
         return PydanticDeserializer(rawClass)
     }

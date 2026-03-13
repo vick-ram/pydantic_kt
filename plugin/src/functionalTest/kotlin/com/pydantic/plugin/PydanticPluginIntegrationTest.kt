@@ -12,31 +12,30 @@ class PydanticPluginIntegrationTest : StringSpec({
 
     beforeSpec {
         testProjectDir.deleteRecursively()
+        testProjectDir.mkdirs()
     }
 
     "plugin should apply successfully" {
         val buildScript = """
             plugins {
-                kotlin("jvm") version "1.9.0"
                 id("com.pydantic")
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
-            
+
             pydantic {
-                enabled = true
-                useDelegates = false
-            }
-            
-            dependencies {
-                implementation(kotlin("stdlib"))
+                //enabled = true
+                enabled.set(true)
+                validationPackage.set("com.example.generated")
             }
         """.trimIndent()
 
         PydanticPluginTestHelper.createTestProject(testProjectDir, buildScript)
         val result = PydanticPluginTestHelper.runGradleBuild(testProjectDir, "tasks")
+        println("Result output: ${result.output}")
 
         result.output shouldContain "generatePydanticValidators"
         result.output shouldContain "validatePydanticModels"
@@ -46,13 +45,17 @@ class PydanticPluginIntegrationTest : StringSpec({
     "should generate validators for annotated models" {
         val buildScript = """
             plugins {
-                kotlin("jvm") version "1.9.0"
                 id("com.pydantic")
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
             }
             
             pydantic {
-                enabled = true
-                useDelegates = false
+                enabled.set(true)
+                useDelegates.set(false)
             }
         """.trimIndent()
 
@@ -79,11 +82,18 @@ class PydanticPluginIntegrationTest : StringSpec({
             "generatePydanticValidators",
             "--info"
         )
+        println("Generator Output:\n${result.output}")
 
         PydanticPluginTestHelper.assertTaskSuccess(result, "generatePydanticValidators")
 
         // Check generated file
         val generatedFile = File(testProjectDir, "build/generated/sources/pydantic/com/example/UserValidator.kt")
+        println("Checking file: ${generatedFile.absolutePath}")
+        println("File exists: ${generatedFile.exists()}")
+        if (generatedFile.exists()) {
+             println("File content:\n${generatedFile.readText()}")
+        }
+        
         generatedFile.exists() shouldBe true
         generatedFile.readText() shouldContain "class UserValidator"
     }
@@ -94,12 +104,17 @@ class PydanticPluginIntegrationTest : StringSpec({
                 kotlin("jvm") version "1.9.0"
                 id("com.pydantic")
             }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
             
             pydantic {
-                enabled = true
-                useDelegates = false
-                strictValidation = true
-                failOnValidationError = true
+                enabled.set(true)
+                useDelegates.set(false)
+                strictValidation.set(true)
+                failOnValidationError.set(true)
             }
         """.trimIndent()
 
@@ -120,6 +135,7 @@ class PydanticPluginIntegrationTest : StringSpec({
             "validatePydanticModels",
             shouldSucceed = false
         )
+        println("Validation Output:\n${result.output}")
 
         PydanticPluginTestHelper.assertTaskFailure(result, "validatePydanticModels")
         result.output shouldContain "must be annotated with @Serializable"
@@ -132,9 +148,14 @@ class PydanticPluginIntegrationTest : StringSpec({
                 id("com.pydantic")
             }
             
+            repositories {
+                mavenCentral()
+                mavenLocal()
+            }
+            
             pydantic {
-                enabled = true
-                useDelegates = true
+                enabled.set(true)
+                useDelegates.set(true)
             }
             
             dependencies {

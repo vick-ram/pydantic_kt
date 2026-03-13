@@ -3,7 +3,7 @@ ksp = "2.3.3"
 jackson = "2.15.2"
 kotest = "6.0.7"
 kotlin = "2.2.21"
-
+kotlinpoet = "1.16.0"
 
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
@@ -12,6 +12,11 @@ ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.re
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+squareup-kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
+
+# Optional: If you are doing KSP/Annotation Processing
+squareup-kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
+squareup-kotlinpoet-metadata = { group = "com.squareup", name = "kotlinpoet-metadata", version.ref = "kotlinpoet" }
 
 # --- Testing ---
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }

@@ -101,7 +101,8 @@ class KspModelProcessor(
                 ".kt"
             )
 
-            file.write(code.toByteArray())
+//            file.write(code.toByteArray())
+            code.writeTo(file.bufferedWriter())
             file.close()
 
             logger.info("Generated validator for ${modelInfo.packageName}.${modelInfo.name}")

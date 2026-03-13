@@ -18,7 +18,7 @@ class PydanticPlugin : Plugin<Project> {
         project.plugins.apply("java")
         project.plugins.apply("org.jetbrains.kotlin.jvm")
 
-        project.dependencies.add("implementation", "com.pydantic:pydantic-runtime:1.0.0")
+        project.dependencies.add("implementation", "com.pydantic:pydantic-runtime:${project.version}")
 
         val generateTask = project.tasks.register("generatePydanticValidators", GenerateValidatorsTask::class.java) {
             it.group = "pydantic"
@@ -28,13 +28,13 @@ class PydanticPlugin : Plugin<Project> {
             it.packageName.set(extension.validationPackage)
             it.useDelegates.set(extension.useDelegates)
 
-            it.enabled = extension.enabled.get()
+            it.onlyIf { extension.enabled.get() }
         }
 
         val delegatesTask = project.tasks.register("generatePydanticDelegates", GenerateDelegatesTask::class.java) {
             it.group = "pydantic"
             it.description = "Generates helper code for Field-delegated models"
-            it.enabled = extension.enabled.get() && extension.useDelegates.get()
+            it.onlyIf { extension.enabled.get() && extension.useDelegates.get() }
         }
 
         val validateTask = project.tasks.register("validatePydanticModels", ValidateModelsTask::class.java) {
@@ -76,9 +76,7 @@ class PydanticPlugin : Plugin<Project> {
                 project.layout.buildDirectory.dir("generated/sources/pydantic").get()
             }
 
-            project.extensions.getByType(KotlinJvmProjectExtension::class.java).let { kotlinExt ->
-                kotlinExt.sourceSets.getByName("main").kotlin.srcDir(generatedDir)
-            }
+            project.extensions.getByType(KotlinJvmProjectExtension::class.java).sourceSets.getByName("main").kotlin.srcDir(generatedDir)
 
             // Add generated sources as implementation dependency
             project.dependencies.add("implementation", project.files(generatedDir))
@@ -91,9 +89,7 @@ class PydanticPlugin : Plugin<Project> {
             }
 
             // Also add to Java source sets for mixed projects
-            project.extensions.getByType(SourceSetContainer::class.java).let { sourceSets ->
-                sourceSets.getByName("main").java.srcDir(generatedDir)
-            }
+            project.extensions.getByType(SourceSetContainer::class.java).getByName("main").java.srcDir(generatedDir)
         }
     }
     private fun configureKsp(project: Project, extension: PydanticExtension) {

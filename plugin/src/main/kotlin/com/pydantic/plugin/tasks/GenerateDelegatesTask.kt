@@ -53,7 +53,8 @@ abstract class GenerateDelegatesTask : DefaultTask() {
                         )
 
                         outputFile.parentFile.mkdirs()
-                        outputFile.writeText(delegateCode)
+                        delegateCode.writeTo(outputFile)
+//                        outputFile.writeText(delegateCode)
                     }
                 } catch (e: Exception) {
                     logger.error("Failed to process file", e)
